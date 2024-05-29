@@ -7,16 +7,25 @@
 using namespace std;
 
 void RateCurve::display() const {
-    cout << "Rate curve: " << name << endl;
+    cout << "rate curve: " << name << endl;
     for (size_t i = 0; i < tenors.size(); i++) {
-        cout << tenors[i].year << "-" << tenors[i].month << "-" << tenors[i].day << ": " << rates[i] << endl;
+        cout << tenors[i] << ": " << rates[i] * 100 << "%" << endl;
     }
     cout << endl;
 }
 
-void RateCurve::addRate(Date tenor, double rate) {
-    tenors.push_back(tenor);
-    rates.push_back(rate);
+void RateCurve::addRate(const Date& tenor, const double& rate) {
+    //consider to check if tenor already exist
+    //if exist, update rate else add rate to curve
+    auto pos = find(tenors.begin(), tenors.end(), tenor);
+    if (pos == tenors.end()) {
+        tenors.push_back(tenor);
+        rates.push_back(rate);
+    }
+    else {
+        int idx = pos - tenors.begin();
+        rates[idx] = rate;
+    }
 }
 
 double RateCurve::getRate(Date tenor) const {
@@ -72,9 +81,24 @@ double Market::getMarketPrice() const {
     return bondPrices.at("SGD-GOV:");
 }
 
-void VolCurve::addVol(Date tenor, double vol) {
-    tenors.push_back(tenor);
-    vols.push_back(vol);
+void VolCurve::display() const {
+    cout << "vol curve: " << name << endl;
+    for (size_t i = 0; i < tenors.size(); i++) {
+        cout << tenors[i] << ": " << vols[i] * 100 << "%" << endl;
+    }
+    cout << endl;
+}
+
+void VolCurve::addVol(const Date& tenor, const double& vol) {
+    auto pos = find(tenors.begin(), tenors.end(), tenor);
+    if (pos == tenors.end()) {
+        tenors.push_back(tenor);
+        vols.push_back(vol);
+    }
+    else {
+        int idx = pos - tenors.begin();
+        vols[idx] = vol;
+    }
 }
 
 double VolCurve::getVol(Date tenor) const {
@@ -133,111 +157,46 @@ double VolCurve::getVol(Date tenor) const {
 }
 */
 
-void VolCurve::display() const {
-    cout << "Vol curve: " << name << endl;
-    for (size_t i = 0; i < tenors.size(); i++) {
-        cout << tenors[i].year << "-" << tenors[i].month << "-" << tenors[i].day << ": " << vols[i] << endl;
+void Market::Print() const
+{
+    cout << "market asof: " << asOf << endl;
+
+    for (auto& curve : curves) {
+        curve.second.display();
+    }
+    for (auto& vol : vols) {
+        vol.second.display();
+    }
+    /*
+    add display for bond price and stock price
+    */
+    cout << "bond prices:" << endl;
+    for (auto& bondPrice : bondPrices) {
+        cout << bondPrice.first << ": " << bondPrice.second << endl;
+    }
+    cout << endl;
+    cout << "stock prices:" << endl;
+    for (auto& stockPrice : stockPrices) {
+        cout << stockPrice.first << ": " << stockPrice.second << endl;
     }
     cout << endl;
 }
 
-void Market::Print() const {
-    cout << "Market as of: " << asOf.year << "-" << asOf.month << "-" << asOf.day << endl;
 
-    cout << "Rate Curves:" << endl;
-    for (const auto& curve : curves) {
-        curve.second.display();
-    }
-
-    cout << "Vol Curves:" << endl;
-    for (const auto& vol : vols) {
-        vol.second.display();
-    }
-
-    cout << "Bond Prices:" << endl;
-    for (const auto& bond : bondPrices) {
-        cout << bond.first << ": " << bond.second << endl;
-    }
-
-    cout << "Stock Prices:" << endl;
-    for (const auto& stock : stockPrices) {
-        cout << stock.first << ": " << stock.second << endl;
-    }
+void Market::addCurve(const std::string& curveData, const RateCurve& curve) {
+    curves.emplace(curveData, curve);
 }
 
-void Market::addCurve(const std::string& curveData) {
-    stringstream curveDataStream(curveData);
-    string curveName;
-    getline(curveDataStream, curveName); // Read the curve name
-    RateCurve rateCurve;
-    rateCurve.name = curveName;
-    string line;
-    while (getline(curveDataStream, line)) {
-        stringstream lineStream(line);
-        string tenor;
-        double rate;
-        getline(lineStream, tenor, ':'); // Read the tenor
-        lineStream >> rate;
-        rate = rate / 100; // Convert percentage to decimal
-        Date tenorDate;
-        // Interpret tenors ON, 3M, etc., to Dates for simplification
-        if (tenor == "ON") tenorDate = Date(0, 0, 1);
-        else if (tenor == "3M") tenorDate = Date(0, 3, 0);
-        else if (tenor == "6M") tenorDate = Date(0, 6, 0);
-        else if (tenor == "9M") tenorDate = Date(0, 9, 0);
-        else if (tenor == "1Y") tenorDate = Date(1, 0, 0);
-        else if (tenor == "2Y") tenorDate = Date(2, 0, 0);
-        else if (tenor == "5Y") tenorDate = Date(5, 0, 0);
-        else if (tenor == "10Y") tenorDate = Date(10, 0, 0);
-        rateCurve.addRate(tenorDate, rate);
-    }
-    
-    curves[curveName] = rateCurve;
-    //cout << curves[curveName].getRate() << endl;
+void Market::addVolCurve(const std::string& volData, const VolCurve& curve) {
+    vols.emplace(volData, curve);
 }
 
-void Market::addVolCurve(const std::string& volData) {
-    stringstream volDataStream(volData);
-    VolCurve volCurve;
-    string line;
-    while (getline(volDataStream, line)) {
-        stringstream lineStream(line);
-        string tenor;
-        double vol;
-        getline(lineStream, tenor, ':'); // Read the tenor
-        lineStream >> vol;
-        vol = vol / 100; // Convert percentage to decimal
-        Date tenorDate;
-        // Interpret tenors 1M, 3M, etc., to Dates for simplification
-        if (tenor == "1M") tenorDate = Date(0, 1, 0);
-        else if (tenor == "3M") tenorDate = Date(0, 3, 0);
-        else if (tenor == "6M") tenorDate = Date(0, 6, 0);
-        else if (tenor == "9M") tenorDate = Date(0, 9, 0);
-        else if (tenor == "1Y") tenorDate = Date(1, 0, 0);
-        else if (tenor == "2Y") tenorDate = Date(2, 0, 0);
-        else if (tenor == "5Y") tenorDate = Date(5, 0, 0);
-        else if (tenor == "10Y") tenorDate = Date(10, 0, 0);
-        volCurve.addVol(tenorDate, vol);
-    }
-    vols["VolCurve"] = volCurve;
+void Market::addBondPrice(const std::string& bondData, double price) {
+    bondPrices.emplace(bondData, price);
 }
 
-void Market::addBondPrice(const std::string& bondData) {
-    stringstream bondDataStream(bondData);
-    string bondName;
-    double bondPrice;
-    while (bondDataStream >> bondName >> bondPrice) {
-        bondPrices[bondName] = bondPrice;
-    }
-}
-
-void Market::addStockPrice(const std::string& stockData) {
-    stringstream stockDataStream(stockData);
-    string stockName;
-    double stockPrice;
-    while (stockDataStream >> stockName >> stockPrice) {
-        stockPrices[stockName] = stockPrice;
-    }
+void Market::addStockPrice(const std::string& stockData, double price) {
+    stockPrices.emplace(stockData, price);
 }
 
 std::ostream& operator<<(std::ostream& os, const Market& mkt) {

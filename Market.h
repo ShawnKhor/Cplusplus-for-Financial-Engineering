@@ -12,7 +12,7 @@ class RateCurve {
 public:
     RateCurve() {};
     RateCurve(const string& _name) : name(_name) {};
-    void addRate(Date tenor, double rate);
+    void addRate(const Date& tenor, const double& rate);
     double getRate(Date tenor) const; // implement this function using linear interpolation
     void display() const;
     std::string name;
@@ -26,7 +26,7 @@ class VolCurve { // atm vol curve without smile
 public:
     VolCurve() {}
     VolCurve(const string& _name) : name(_name) {};
-    void addVol(Date tenor, double rate); // implement this
+    void addVol(const Date& tenor,const double& rate); // implement this
     double getVol(Date tenor) const; // implement this function using linear interpolation
     void display() const; // implement this
 
@@ -41,10 +41,10 @@ public:
     Date asOf;
     Market(const Date& now) : asOf(now) {}
     void Print() const;
-    void addCurve(const std::string& curveData);
-    void addVolCurve(const std::string& volData); 
-    void addBondPrice(const std::string& bondData); 
-    void addStockPrice(const std::string& stockData);
+    void addCurve(const std::string& curveData, const RateCurve& curve);
+    void addVolCurve(const std::string& volData, const VolCurve& curve);
+    void addBondPrice(const std::string& bondData, double price);
+    void addStockPrice(const std::string& stockData, double price);
     double getMarketPrice() const;
 
     inline RateCurve getCurve(const string& name) { return curves[name]; }
