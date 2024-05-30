@@ -29,7 +29,8 @@ double Swap::getAnnuity() const {
     {
         if (day >= mkt.asOf)
         {
-            double r = mkt.getCurve("USD-SOFR").getRate(day); 
+            const string name = "USD-SOFR";
+            double r = mkt.getCurve(name).getRate(day);
              
             double t = day - mkt.asOf;
             sumDiscFacts += (exp(-(r * t)) * yearFrac); //following formula

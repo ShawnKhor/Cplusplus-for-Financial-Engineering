@@ -47,8 +47,8 @@ public:
     void addStockPrice(const std::string& stockData, double price);
     double getMarketPrice() const;
 
-    inline RateCurve getCurve(const string& name) { return curves[name]; }
-    inline VolCurve getVolCurve(const string& name) { return vols[name]; }
+    inline RateCurve getCurve(const string& name) const { return curves.at(name); };
+    inline VolCurve getVolCurve(const string& name) const { return vols.at(name); };
     inline double getStockPrice(const string& name) const { return stockPrices.at(name); };
     inline double getBondPrice(const string& name) const { return bondPrices.at(name); };
 

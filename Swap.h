@@ -4,13 +4,14 @@
 #include <list>
 #include <cmath>
 #include "Trade.h"
+#include "Market.h"
 
 using namespace std;
 
 class Swap : public Trade {
 public:
     //make necessary change
-    Swap(Date start, Date end, double _notional, double _price, Market& _mkt, double _frequency): 
+    Swap(Date start, Date end, double _notional, double _price, Market& _mkt, double _frequency):
         Trade("SwapTrade", start),startDate(start), maturityDate(end), mkt(_mkt) {
         /*
         
@@ -33,7 +34,7 @@ public:
     Df = exp(-rT), r taken from curve;
     */
 
-    inline double Payoff(double marketPrice) const { return getAnnuity() * (tradeRate - marketPrice); };
+    inline double Payoff(double marketPrice) const override { return getAnnuity() * (tradeRate - marketPrice); };
     double getAnnuity() const; //implement this in a cpp file
         
 private:
