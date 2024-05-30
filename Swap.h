@@ -1,11 +1,17 @@
-#pragma once
+#ifndef SWAP_H
+#define SWAP_H
+
 #include <list>
+#include <cmath>
 #include "Trade.h"
+
+using namespace std;
 
 class Swap : public Trade {
 public:
     //make necessary change
-    Swap(Date start, Date end, double _notional, double _price, int _frequency): Trade("SwapTrade", start) {
+    Swap(Date start, Date end, double _notional, double _price, Market& _mkt, double _frequency): 
+        Trade("SwapTrade", start),startDate(start), maturityDate(end), mkt(_mkt) {
         /*
         
         add constructor details
@@ -27,14 +33,16 @@ public:
     Df = exp(-rT), r taken from curve;
     */
 
-    inline double Payoff(double marketPrice) const { return 0; }; 
-    double getAnnuity(Market& mkt); //implement this in a cpp file
-
+    inline double Payoff(double marketPrice) const { return getAnnuity() * (tradeRate - marketPrice); };
+    double getAnnuity() const; //implement this in a cpp file
         
 private:
     Date startDate;
     Date maturityDate;
+    Market mkt;
     double notional;
     double tradeRate;
     double frequency; // use 1 for annual, 2 for semi-annual etc
 };
+
+#endif

@@ -139,7 +139,7 @@ int main() {
     vector<Trade*> myPortfolio;
 
     //BONDS
-    Trade* bond1 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5);
+    Trade* bond1 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, "SGD-GOV");
     myPortfolio.push_back(bond1);
     /*
     Trade* bond2 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5);
@@ -154,7 +154,7 @@ int main() {
 
 
     //SWAPS
-    Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, 1);
+    Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 1.1, mkt, 1);
     myPortfolio.push_back(swap1);
     /*
     Trade* swap2 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, 1);
@@ -206,7 +206,7 @@ int main() {
     Pricer* treePricer = new CRRBinomialTreePricer(10);
     for (auto trade : myPortfolio) {
         double pv = treePricer->Price(mkt, trade);
-        cout << "Present Value for " << trade->getType() << ": " << pv << endl;
+        cout << "Present Value for " << trade->getType() << ": $" << pv << endl;
         // Log PV details out in a file
     }
 

@@ -12,10 +12,15 @@ double Pricer::Price(Market& mkt, Trade* trade) {
       pv = PriceTree(mkt, *treePtr);
     }
   }
-  else{
+  else if (trade->getType() == "BondTrade") {
       double price{}; //get from market data
     //pv = trade->Payoff(price);
-      pv = trade->Payoff(mkt.getMarketPrice());
+      pv = trade->Payoff(mkt.getBondPrice("SGD-GOV"));
+  }
+  else if (trade->getType() == "SwapTrade") {
+      double price{};
+      pv = trade->Payoff(mkt.getCurve("USD-SOFR").getRate(mkt.asOf));
+
   }
 
   return pv;

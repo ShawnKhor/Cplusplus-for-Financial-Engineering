@@ -27,7 +27,7 @@ public:
     VolCurve() {}
     VolCurve(const string& _name) : name(_name) {};
     void addVol(const Date& tenor,const double& rate); // implement this
-    double getVol(Date tenor) const; // implement this function using linear interpolation
+    double getVol(const Date tenor) const; // implement this function using linear interpolation
     void display() const; // implement this
 
 private:
