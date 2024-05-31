@@ -30,32 +30,27 @@ double BinomialTreePricer::PriceTree(Market& mkt, const TreeProduct& trade) {
   // model setup
   double T = trade.GetExpiry() - mkt.asOf;
   double dt = T / nTimeSteps;
-  double stockPrice{}, vol{}, rate{};
+  double stockPrice, vol, rate;
+  string rateCurve = "USD-SOFR";
+  string volCurve = "ATM-Vol";
   /*
   get these data for the deal from market object
   */
-  cout << trade.GetExpiry() << endl;
-  string day = to_string(trade.GetExpiry().day);
-  string month = to_string(trade.GetExpiry().month);
-  string year = to_string(trade.GetExpiry().year);
-
-  //vol = mkt.getVolCurve("");
-
-  //cout << vol << endl;
-
+  rate = mkt.getCurve(rateCurve).getRate(trade.GetExpiry());
+  vol = mkt.getVolCurve(volCurve).getVol(trade.GetExpiry());
+  stockPrice = mkt.getStockPrice(trade.getName());
   ModelSetup(stockPrice, vol, rate, dt);
 
-  //cout << nTimeSteps << endl;
   // initialize
   for (int i = 0; i <= nTimeSteps; i++) {
     states[i] = trade.Payoff( GetSpot(nTimeSteps, i) );
-  }    
-  
+  }
+
   // price by backward induction
   for (int k = nTimeSteps-1; k >= 0; k--)
     for (int i = 0; i <= k; i++) {
-    // calculate continuation value
-      double df = exp(-rate *dt);	  
+      // calculate continuation value
+      double df = exp(-rate *dt);
       double continuation = df * (states[i]*GetProbUp() + states[i+1]*GetProbDown());
       // calculate the option value at node(k, i)
       states[i] = trade.ValueAtNode( GetSpot(k, i), dt*k, continuation);

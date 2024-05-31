@@ -79,7 +79,7 @@ int main() {
 
     // Read and add bond prices
     string bondname;
-    std::string bondPricePath = "C://Users/sunit/OneDrive/Desktop/#SMU Stuff/QF633 C++/code_L5/code_L5/oop/bondPrice.txt";
+    std::string bondPricePath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/bondPrice.txt";
     vector< pair<string, double> >bondData;
     
     readFromFile(bondPricePath,bondname, bondData);
@@ -91,7 +91,7 @@ int main() {
 
     // Read and add stock prices
     string stockname;
-    std::string stockPricePath = "C://Users/sunit/OneDrive/Desktop/#SMU Stuff/QF633 C++/code_L5/code_L5/oop/stockPrice.txt";
+    std::string stockPricePath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/stockPrice.txt";
     vector< pair<string, double> >stockData;
     
     readFromFile(stockPricePath,stockname, stockData);
@@ -102,7 +102,7 @@ int main() {
 
     // Read and add volatility data
     string volname;
-    std::string volPath = "C://Users/sunit/OneDrive/Desktop/#SMU Stuff/QF633 C++/code_L5/code_L5/oop/vol.txt";
+    std::string volPath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/vol.txt";
     vector< pair<string, double> >volData;
     
     readFromFile(volPath,volname, volData);
@@ -118,7 +118,7 @@ int main() {
 
     // Read and add curve data
     string curvename;
-    std::string curvePath = "C://Users/sunit/OneDrive/Desktop/#SMU Stuff/QF633 C++/code_L5/code_L5/oop/curve.txt";
+    std::string curvePath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/curve.txt";
     vector< pair<string, double> >curveData;
     
     readFromFile(curvePath,curvename, curveData);
@@ -154,7 +154,7 @@ int main() {
 
 
     //SWAPS
-    Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 1.1, mkt, 1);
+    Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.1, mkt, 1, "swap1");
     myPortfolio.push_back(swap1);
     /*
     Trade* swap2 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, 1);
@@ -169,7 +169,7 @@ int main() {
 
 
     //American OPTIONS
-    TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0));
+    TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(A_option1);
 
     /*
@@ -184,7 +184,7 @@ int main() {
     */
 
     //European Options
-    TreeProduct* E_option1 = new EuropeanOption(Call, 100, Date(0, 2, 0));
+    TreeProduct* E_option1 = new EuropeanOption(Call, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(E_option1);
 
     /*
