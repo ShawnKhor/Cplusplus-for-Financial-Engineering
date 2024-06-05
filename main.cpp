@@ -1,18 +1,23 @@
-#include <fstream>
-#include <ctime>
 #include <chrono>
-#include <iostream>
-#include <sstream>
+#include <cmath>
+#include <ctime>
+#include <fstream>
 #include <functional>
+#include <iomanip>
+#include <iostream>
 #include <regex>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "Market.h"
-#include "Pricer.h"
-#include "EuropeanTrade.h"
-#include "Bond.h"
-#include "Swap.h"
-#include "Date.h"
-#include "AmericanTrade.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Market.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Pricer.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/EuropeanTrade.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Bond.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Swap.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Date.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/AmericanTrade.h"
 
 using namespace std;
 
@@ -65,6 +70,35 @@ void readFromFile(const string& fileName, string& title, vector< pair<string, do
     MyReadFile.close();
 }
 
+double normCDF(const double& x ) {
+    return (1.0 + erf(x / sqrt(2.0))) / 2.0;
+}
+
+double blackModel(const double& S0, const double& K, const double& sigma, const double& rf,
+                              const double& q, const double& T, const OptionType& optType) {
+    double d1, d2, fwd, stdev;
+    fwd = S0 * exp((rf-q) * T);
+    stdev = sigma * sqrt(T);
+    d1 = log(fwd/K) / stdev + stdev / 2.0;
+    d2 = d1 - stdev;
+    switch (optType) {
+    case OptionType::Call:
+        return exp(-rf * T) * (fwd*normCDF(d1) - K*normCDF(d2));
+        break;
+    case OptionType::Put:
+        return exp(-rf * T) * (K*normCDF(-d2) - fwd*normCDF(-d1));
+        break;
+    case OptionType::BinaryCall:
+        return exp(-rf * T) * normCDF(d1);
+        break;
+    case OptionType::BinaryPut:
+        return exp(-rf * T) * (1 - normCDF(d1));
+        break;
+    default:
+        throw invalid_argument("Unsupported OptionType");
+    }
+}
+
 int main() {
     // Task 1: Create a market data object and update the market data from txt files 
     std::time_t t = std::time(0);
@@ -79,7 +113,7 @@ int main() {
 
     // Read and add bond prices
     string bondname;
-    std::string bondPricePath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/bondPrice.txt";
+    std::string bondPricePath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\bondPrice.txt";
     vector< pair<string, double> >bondData;
     
     readFromFile(bondPricePath,bondname, bondData);
@@ -91,7 +125,7 @@ int main() {
 
     // Read and add stock prices
     string stockname;
-    std::string stockPricePath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/stockPrice.txt";
+    std::string stockPricePath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\stockPrice.txt";
     vector< pair<string, double> >stockData;
     
     readFromFile(stockPricePath,stockname, stockData);
@@ -102,7 +136,7 @@ int main() {
 
     // Read and add volatility data
     string volname;
-    std::string volPath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/vol.txt";
+    std::string volPath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\vol.txt";
     vector< pair<string, double> >volData;
     
     readFromFile(volPath,volname, volData);
@@ -118,7 +152,7 @@ int main() {
 
     // Read and add curve data
     string curvename;
-    std::string curvePath = "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/curve.txt";
+    std::string curvePath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\curve.txt";
     vector< pair<string, double> >curveData;
     
     readFromFile(curvePath,curvename, curveData);
@@ -142,13 +176,13 @@ int main() {
     Trade* bond1 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, "SGD-GOV");
     myPortfolio.push_back(bond1);
     /*
-    Trade* bond2 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5);
+    Trade* bond2 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 105.5, "SGD-GOV_2");
     myPortfolio.push_back(bond2);
 
-    Trade* bond3 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5);
+    Trade* bond3 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 107.5, "SGD-GOV_3");
     myPortfolio.push_back(bond3);
 
-    Trade* bond4 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5);
+    Trade* bond4 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 109.5, "SGD-GOV_4");
     myPortfolio.push_back(bond4);
     */
 
@@ -157,44 +191,44 @@ int main() {
     Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.1, mkt, 1, "swap1");
     myPortfolio.push_back(swap1);
     /*
-    Trade* swap2 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, 1);
+    Trade* swap2 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.2, mkt, 1, "swap2");
     myPortfolio.push_back(swap2);
 
-    Trade* swap3 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, 1);
+    Trade* swap3 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.3, mkt, 1, "swap3");
     myPortfolio.push_back(swap3);
 
-    Trade* swap4 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, 1);
+    Trade* swap4 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.4, mkt, 1, "swap4");
     myPortfolio.push_back(swap4);
     */
 
 
     //American OPTIONS
-    TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(A_option1);
 
     /*
-    TreeProduct* A_option2 = new AmericanOption(Put, 100, Date(1, 0, 0));
+    TreeProduct* A_option2 = new AmericanOption(Put, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(A_option2);
 
-    TreeProduct* A_option3 = new AmericanOption(BinaryCall, 100, Date(0, 2, 0));
+    TreeProduct* A_option3 = new AmericanOption(BinaryCall, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(A_option3);
 
-    TreeProduct* A_option4 = new AmericanOption(BinaryPut, 100, Date(0, 2, 0));
+    TreeProduct* A_option4 = new AmericanOption(BinaryPut, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(A_option4);
     */
 
     //European Options
-    TreeProduct* E_option1 = new EuropeanOption(Call, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* E_option1 = new EuropeanOption(Call, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(E_option1);
 
     /*
-    TreeProduct* E_option2 = new EuropeanOption(Put, 100, Date(1, 0, 0));
+    TreeProduct* E_option2 = new EuropeanOption(Put, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(E_option2);
 
-    TreeProduct* E_option3 = new EuropeanOption(BinaryCall, 100, Date(0, 2, 0));
+    TreeProduct* E_option3 = new EuropeanOption(BinaryCall, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(E_option3);
 
-    TreeProduct* E_option4 = new EuropeanOption(BinaryPut, 100, Date(0, 2, 0));
+    TreeProduct* E_option4 = new EuropeanOption(BinaryPut, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(E_option4);
     */
 
@@ -202,17 +236,102 @@ int main() {
     /* mkt.getVolCurve("");*/
 
 
-     // Task 3: Create a pricer and price the portfolio, output the pricing result of each deal.
+    // Task 3: Create a pricer and price the portfolio, output the pricing result of each deal.
     Pricer* treePricer = new CRRBinomialTreePricer(10);
-    for (auto trade : myPortfolio) {
-        double pv = treePricer->Price(mkt, trade);
-        cout << "Present Value for " << trade->getType() << ": $" << pv << endl;
-        // Log PV details out in a file
+
+    // uncomment for output file creation
+    std::ofstream outputFile("C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\output.txt");
+
+    if (!outputFile) {
+        std::cerr << "Unable to open file";
+        return 1;
     }
+
+    // Set column widths
+    const int tradeTypeWidth = 15;
+    const int tradeNameWidth = 20;
+    const int pvWidth = 10;
+
+    // Write headers with fixed width
+    outputFile << std::left
+        << std::setw(tradeTypeWidth) << "tradeType"
+        << std::setw(tradeNameWidth) << "tradeName"
+        << std::setw(pvWidth) << "pv"
+        << '\n';
+
+    for (const auto& trade : myPortfolio) {
+        double pv = treePricer->Price(mkt, trade);
+        std::string tradeName = trade->getName(); // Getting the tradename for clarity
+
+        // Write each trade with fixed width columns
+        outputFile << std::left
+            << std::setw(tradeTypeWidth) << trade->getType()
+            << std::setw(tradeNameWidth) << tradeName
+            << std::setw(pvWidth) << pv
+            << '\n';
+    }
+
+    outputFile.close(); // Close the output file
+    cout << "Portfolio logged,open output.txt in same directory as main.cpp \n\n";
 
     // Task 4: Analyzing pricing result
     // a) Compare CRR binomial tree result for a European option vs Black model
     // b) Compare CRR binomial tree result for an American option vs European option
+
+    // TASK 4 PART A - Eurpoean option vs black model
+    cout << endl;
+    cout << "TASK 4 part A: crr binomial vs Black model for european" << endl;
+    double eur_k = 700;
+    Date eur_maturity = Date(2026,5,21);
+    string eur_stock = "APPL";
+    TreeProduct* eur_aapl = new EuropeanOption(OptionType:: Call, eur_k, eur_maturity, eur_stock);
+
+    // Black model
+    double eur_rf = mkt.getCurve("USD-SOFR").getRate(eur_aapl->GetExpiry());
+    double eur_sigma = mkt.getVolCurve("ATM-Vol").getVol(eur_aapl->GetExpiry());
+    double eur_T = eur_aapl->GetExpiry() - valueDate;
+    double eur_spot = mkt.getStockPrice(eur_aapl->getName());
+
+    double black_price = blackModel(eur_spot,eur_k,eur_sigma,eur_rf,0,eur_T, OptionType::Call);
+    cout << "European call option black model price: " << black_price << endl;
+
+
+    auto nSteps = 20;
+    double binomialPV;
+    Pricer* nStepPricer;
+
+    nStepPricer = new CRRBinomialTreePricer(nSteps);
+    binomialPV = nStepPricer->Price(mkt, eur_aapl);
+    cout << "binomial price: " << binomialPV << " and difference is: " << black_price - binomialPV << endl;
+
+    // TASK 4 part B: american vs european call and put crr binomial tree
+    cout<< endl;
+    cout << "TASK 4 part B: american vs european call and put crr binomial tree" << endl;
+    double eur_call_price;
+    double eur_put_price;
+    double amer_call_price;
+    double amer_put_price;
+
+    Trade* eur_call = new EuropeanOption(OptionType::Call, 700, Date(2024, 12, 21), "APPL");
+    Trade* eur_put = new EuropeanOption(OptionType::Put, 700, Date(2026, 5, 21), "APPL");
+    Trade* amer_call = new AmericanOption(OptionType::Call, 700, Date(2024, 12, 21), "APPL");
+    Trade* amer_put = new AmericanOption(OptionType::Put, 700, Date(2026, 5, 21), "APPL");
+
+
+    nStepPricer = new CRRBinomialTreePricer(nSteps);
+    eur_call_price = nStepPricer->Price(mkt, eur_call);
+    amer_call_price = nStepPricer->Price(mkt, amer_call);
+    cout << "Binomial tree price for call options:" << endl;
+    cout << "Eur call: " << eur_call_price << " and American Call: " << amer_call_price << endl;
+    cout << "Difference: " << amer_call_price - eur_call_price << endl;
+
+    nStepPricer = new CRRBinomialTreePricer(nSteps);
+    eur_put_price = nStepPricer->Price(mkt, eur_put);
+    amer_put_price = nStepPricer->Price(mkt, amer_put);
+    cout << endl;
+    cout << "Binomial tree price for put options:" << endl;
+    cout << "Eur put: " << eur_put_price << " and American put: " << amer_put_price << endl;
+    cout << "Difference: " << amer_put_price - eur_put_price << endl;
 
     // Final
     cout << "Project build successfully!" << endl;
