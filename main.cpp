@@ -11,14 +11,6 @@
 #include <utility>
 #include <vector>
 
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Market.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Pricer.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/EuropeanTrade.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Bond.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Swap.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Date.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/AmericanTrade.h"
-
 using namespace std;
 
 void readFromFile(const string& fileName, string& title, vector< pair<string, double> >& values) {
@@ -175,22 +167,19 @@ int main() {
     //BONDS
     Trade* bond1 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, "SGD-GOV");
     myPortfolio.push_back(bond1);
-    /*
-    Trade* bond2 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 105.5, "SGD-GOV_2");
+    Trade* bond2 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 105.5, "USD-GOV");
     myPortfolio.push_back(bond2);
 
-    Trade* bond3 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 107.5, "SGD-GOV_3");
+    Trade* bond3 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 107.5, "USD-GOV");
     myPortfolio.push_back(bond3);
 
-    Trade* bond4 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 109.5, "SGD-GOV_4");
+    Trade* bond4 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 99.5, "SGD-MAS-BILL");
     myPortfolio.push_back(bond4);
-    */
 
 
     //SWAPS
     Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.1, mkt, 1, "swap1");
     myPortfolio.push_back(swap1);
-    /*
     Trade* swap2 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.2, mkt, 1, "swap2");
     myPortfolio.push_back(swap2);
 
@@ -199,38 +188,33 @@ int main() {
 
     Trade* swap4 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.4, mkt, 1, "swap4");
     myPortfolio.push_back(swap4);
-    */
 
 
     //American OPTIONS
     TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(A_option1);
 
-    /*
     TreeProduct* A_option2 = new AmericanOption(Put, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(A_option2);
 
     TreeProduct* A_option3 = new AmericanOption(BinaryCall, 100, Date(0, 2, 0), "AAPL");
     myPortfolio.push_back(A_option3);
 
-    TreeProduct* A_option4 = new AmericanOption(BinaryPut, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* A_option4 = new AmericanOption(BinaryPut, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(A_option4);
-    */
 
     //European Options
-    TreeProduct* E_option1 = new EuropeanOption(Call, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* E_option1 = new EuropeanOption(Call, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(E_option1);
 
-    /*
-    TreeProduct* E_option2 = new EuropeanOption(Put, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* E_option2 = new EuropeanOption(Put, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(E_option2);
 
-    TreeProduct* E_option3 = new EuropeanOption(BinaryCall, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* E_option3 = new EuropeanOption(BinaryCall, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(E_option3);
 
-    TreeProduct* E_option4 = new EuropeanOption(BinaryPut, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* E_option4 = new EuropeanOption(BinaryPut, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(E_option4);
-    */
 
 
     /* mkt.getVolCurve("");*/
