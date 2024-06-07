@@ -8,7 +8,9 @@ class TreeProduct: public Trade
 {
 public:
     TreeProduct(): Trade() { tradeType = "TreeProduct";};
-    virtual const Date& GetExpiry() const = 0;
+    virtual Date GetExpiry() const = 0;
+    virtual double GetPrice() const = 0;
+    virtual string GetNotional() const =0;
     virtual double ValueAtNode(double stockPrice, double t, double continuationValue) const = 0;
 };
 

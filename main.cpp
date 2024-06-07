@@ -10,6 +10,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <cctype>
+#include <algorithm>
 
 #include "Market.h"
 #include "Pricer.h"
@@ -100,6 +102,53 @@ double blackModel(const double& S0, const double& K, const double& sigma, const 
     }
 }
 
+// Date setExpiry (Date asOf,const int y,const int m,const int d)
+// {
+//     Date newdt=asOf;
+//
+//     newdt.year += y;
+//     newdt.month += m;
+//     newdt.day += d;
+//
+//     return newdt;
+// }
+
+std::string truncateString(const std::string& str, size_t maxWidth) {
+    if (str.length() > maxWidth) {
+        return str.substr(0, maxWidth);
+    }
+    return str;
+}
+
+
+string formatDouble(double value, int precision = 2) {
+    std::ostringstream out;
+    out.precision(precision);
+    out << std::fixed << value;
+    if (value == -1234.0)
+    {
+        return "Not Applicable";
+    }
+
+    return out.str();
+}
+
+double safeStod(const std::string& str) {
+    if (str.empty() || str == "not applicable") {
+        // std::cerr << "Warning: Invalid input '" << str << "' treated as 0.\n";
+        return -1234.0; // Default value for non-numeric notional
+    }
+    try {
+        return std::stod(str);
+    } catch (const std::invalid_argument& e) {
+        // std::cerr << "Invalid argument: '" << str << "' could not be converted to double. Error: " << e.what() << std::endl;
+        return 0.0; // Default value
+    } catch (const std::out_of_range& e) {
+        // std::cerr << "Out of range: '" << str << "' is out of range for a double. Error: " << e.what() << std::endl;
+        return 0.0; // Default value
+    }
+}
+
 int main() {
     // Task 1: Create a market data object and update the market data from txt files 
     std::time_t t = std::time(0);
@@ -109,7 +158,12 @@ int main() {
     valueDate.month = now_->tm_mon + 1;
     valueDate.day = now_->tm_mday;
 
+    cout << valueDate << endl;
+
     Market mkt = Market(valueDate);
+    // Date test = setExpiry(valueDate,10,0,0);
+    // cout << test << endl;
+
 
     // Change this path to the project location where all txt files are located
     string basePath = "C:\\Users\\sunit\\CLionProjects\\Cplusplus-for-Financial-Engineering\\";
@@ -176,58 +230,58 @@ int main() {
     vector<Trade*> myPortfolio;
 
     //BONDS
-    Trade* bond1 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 103.5, "SGD-GOV");
+    Trade* bond1 = new Bond(Date(2024, 1, 1), Date(2025,0,0), 10000, 103.5, "SGD-GOV");
     myPortfolio.push_back(bond1);
-    Trade* bond2 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 105.5, "USD-GOV");
+    Trade* bond2 = new Bond(Date(2024, 1, 1), Date(2030,0,0), 10000, 105.5, "USD-GOV");
     myPortfolio.push_back(bond2);
 
-    Trade* bond3 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 107.5, "USD-GOV");
+    Trade* bond3 = new Bond(Date(2024, 1, 1), Date(2035,0,0), 10000, 107.5, "USD-GOV");
     myPortfolio.push_back(bond3);
 
-    Trade* bond4 = new Bond(Date(2024, 1, 1), Date(2034, 1, 1), 10000000, 99.5, "SGD-MAS-BILL");
+    Trade* bond4 = new Bond(Date(2024, 1, 1), Date(2045,0,0), 10000, 99.5, "SGD-MAS-BILL");
     myPortfolio.push_back(bond4);
 
 
     //SWAPS
-    Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.1, mkt, 1, "swap1");
+    Trade* swap1 = new Swap(Date(2024, 1, 1), Date(2025,0,0), 1000, 1.1, mkt, 1, "swap1");
     myPortfolio.push_back(swap1);
-    Trade* swap2 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.2, mkt, 1, "swap2");
+    Trade* swap2 = new Swap(Date(2024, 1, 1), Date(2030,0,0), 1000, 1.2, mkt, 1, "swap2");
     myPortfolio.push_back(swap2);
 
-    Trade* swap3 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.3, mkt, 1, "swap3");
+    Trade* swap3 = new Swap(Date(2024, 1, 1), Date(2035,0,0), 1000, 1.3, mkt, 1, "swap3");
     myPortfolio.push_back(swap3);
 
-    Trade* swap4 = new Swap(Date(2024, 1, 1), Date(2034, 1, 1), 1000, 1.4, mkt, 1, "swap4");
+    Trade* swap4 = new Swap(Date(2024, 1, 1), Date(2045,0,0), 1000, 1.4, mkt, 1, "swap4");
     myPortfolio.push_back(swap4);
 
 
     //American OPTIONS
-    TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* A_option1 = new AmericanOption(Call, 600, Date(2024,8,0), "APPL");
     myPortfolio.push_back(A_option1);
 
-    TreeProduct* A_option2 = new AmericanOption(Put, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* A_option2 = new AmericanOption(Put, 600, Date(2024,10,0), "APPL");
     myPortfolio.push_back(A_option2);
 
-    TreeProduct* A_option3 = new AmericanOption(BinaryCall, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* A_option3 = new AmericanOption(BinaryCall, 600, Date(2025,1,0), "APPL");
     myPortfolio.push_back(A_option3);
 
-    TreeProduct* A_option4 = new AmericanOption(BinaryPut, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* A_option4 = new AmericanOption(BinaryPut, 700, Date(2025,4,0), "APPL");
     myPortfolio.push_back(A_option4);
 
     //European Options
-    TreeProduct* E_option1 = new EuropeanOption(Call, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* E_option1 = new EuropeanOption(Call, 700, Date(2024,8,0), "APPL");
     myPortfolio.push_back(E_option1);
 
-    TreeProduct* E_option2 = new EuropeanOption(Put, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* E_option2 = new EuropeanOption(Put, 600, Date(2024,10,0), "APPL");
     myPortfolio.push_back(E_option2);
 
-    TreeProduct* E_option3 = new EuropeanOption(BinaryCall, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* E_option3 = new EuropeanOption(BinaryCall, 700, Date(2025,1,0), "APPL");
     myPortfolio.push_back(E_option3);
 
-    TreeProduct* E_option4 = new EuropeanOption(BinaryPut, 100, Date(0, 2, 0), "APPL");
+    TreeProduct* E_option4 = new EuropeanOption(BinaryPut, 600, Date(2025,4,0), "APPL");
     myPortfolio.push_back(E_option4);
 
-
+    cout << swap1 -> GetExpiry() << endl;
     /* mkt.getVolCurve("");*/
 
 
@@ -245,26 +299,55 @@ int main() {
     // Set column widths
     const int tradeTypeWidth = 15;
     const int tradeNameWidth = 20;
+    const int tradeExpiryWidth = 20;
+    const int tradePriceWidth = 30;
+    const int tradeNotionalWidth = 30;
     const int pvWidth = 10;
 
     // Write headers with fixed width
     outputFile << std::left
         << std::setw(tradeTypeWidth) << "tradeType"
         << std::setw(tradeNameWidth) << "tradeName"
+        << std::setw(tradeExpiryWidth) << "tradeExpiry"
+        << std::setw(tradePriceWidth) << "price/strike/rate"
+        << std::setw(tradeNotionalWidth) << "Notional"
         << std::setw(pvWidth) << "pv"
         << '\n';
 
+
     for (const auto& trade : myPortfolio) {
         double pv = treePricer->Price(mkt, trade);
-        std::string tradeName = trade->getName(); // Getting the tradename for clarity
+        std::string tradeName = truncateString(trade->getName(), tradeNameWidth - 1); // Truncate to fit
+        std::string tradeType = truncateString(trade->getType(), tradeTypeWidth - 1);
+        std::string tradePrice = formatDouble(trade->GetPrice(), 2); // Format with 2 decimal places
+        std::string notional = formatDouble(safeStod(trade->GetNotional()), 2); // Convert and format notional
 
-        // Write each trade with fixed width columns
         outputFile << std::left
-            << std::setw(tradeTypeWidth) << trade->getType()
+            << std::setw(tradeTypeWidth) << tradeType
             << std::setw(tradeNameWidth) << tradeName
-            << std::setw(pvWidth) << pv
+            << std::setw(tradeExpiryWidth) << trade->GetExpiry()
+            << std::setw(tradePriceWidth) << tradePrice
+            << std::setw(tradeNotionalWidth) << notional
+            << std::setw(pvWidth) << formatDouble(pv, 2)
             << '\n';
     }
+
+    // for (const auto& trade : myPortfolio) {
+    //     double pv = treePricer->Price(mkt, trade);
+    //     std::string tradeName = trade->getName(); // Getting the tradename for clarity
+    //
+    //     string tradePricestring = "    " + std::to_string(trade -> GetPrice());
+    //
+    //     // Write each trade with fixed width columns
+    //     outputFile << std::left
+    //         << std::setw(tradeTypeWidth) << trade->getType()
+    //         << std::setw(tradeNameWidth) << tradeName
+    //         << std::setw(tradeExpiryWidth) << trade -> GetExpiry()
+    //         << std::setw(tradeNotionalWidth) << trade -> GetNotional()
+    //         << std::setw(tradePriceWidth) << tradePricestring
+    //         << std::setw(pvWidth) << pv
+    //         << '\n';
+    // }
 
     outputFile.close(); // Close the output file
     cout << "Portfolio logged,open output.txt in same directory as main.cpp \n\n";

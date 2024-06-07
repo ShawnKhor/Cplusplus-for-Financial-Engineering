@@ -17,7 +17,11 @@ public:
 
     virtual double Payoff(double S) const { return PAYOFF::VanillaOption(optType, strike, S); }
 
-    virtual const Date &GetExpiry() const { return expiryDate; }
+    virtual Date GetExpiry() const { return expiryDate; }
+
+    virtual double GetPrice() const {return strike;}
+
+    virtual string GetNotional() const override {return "not applicable";}
 
     virtual double ValueAtNode(double S, double t, double continuation) const { return continuation; }
 
@@ -39,7 +43,7 @@ public:
 
     virtual double Payoff(double S) const { return PAYOFF::CallSpread(strike1, strike2, S); };
 
-    virtual const Date &GetExpiry() const { return expiryDate; };
+    virtual Date GetExpiry() const { return expiryDate; };
 private:
     double strike1;
     double strike2;

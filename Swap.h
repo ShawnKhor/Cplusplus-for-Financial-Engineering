@@ -38,6 +38,9 @@ public:
     inline double Payoff(double marketPrice) const override { return getAnnuity() * (tradeRate - marketPrice); };
     double getAnnuity() const; //implement this in a cpp file
     string getName() const override {return name; }
+    Date GetExpiry() const override { return maturityDate;}
+    double GetPrice() const override { return tradeRate;}
+    string GetNotional() const override { return std::to_string(notional);}
         
 private:
     Date startDate;
