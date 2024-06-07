@@ -1,0 +1,60 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Cplusplus_for_Financial_Engineering",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Cplusplus_for_Financial_Engineering::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Cplusplus_for_Financial_Engineering-Debug-36f25df79662f2db3dcd.json",
+					"name" : "Cplusplus_for_Financial_Engineering",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering/cmake-build-debug",
+		"source" : "/Users/Kim_Wee/Library/CloudStorage/OneDrive-SingaporeManagementUniversity/Term 3/QF633 - C++ Financial Engineering/Cplusplus-for-Financial-Engineering"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
