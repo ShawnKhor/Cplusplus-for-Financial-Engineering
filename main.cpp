@@ -111,10 +111,12 @@ int main() {
 
     Market mkt = Market(valueDate);
 
+    // Change this path to the project location where all txt files are located
+    string basePath = "C:\\Users\\sunit\\CLionProjects\\Cplusplus-for-Financial-Engineering\\";
 
     // Read and add bond prices
     string bondname;
-    std::string bondPricePath = "";
+    std::string bondPricePath = basePath + "bondPrice.txt";
     vector< pair<string, double> >bondData;
     
     readFromFile(bondPricePath,bondname, bondData);
@@ -126,7 +128,7 @@ int main() {
 
     // Read and add stock prices
     string stockname;
-    std::string stockPricePath = "";
+    std::string stockPricePath = basePath + "stockPrice.txt";
     vector< pair<string, double> >stockData;
     
     readFromFile(stockPricePath,stockname, stockData);
@@ -137,7 +139,7 @@ int main() {
 
     // Read and add volatility data
     string volname;
-    std::string volPath = "";
+    std::string volPath = basePath + "vol.txt";
     vector< pair<string, double> >volData;
     
     readFromFile(volPath,volname, volData);
@@ -153,7 +155,7 @@ int main() {
 
     // Read and add curve data
     string curvename;
-    std::string curvePath = "";
+    std::string curvePath = basePath + "curve.txt";
     vector< pair<string, double> >curveData;
     
     readFromFile(curvePath,curvename, curveData);
@@ -233,7 +235,7 @@ int main() {
     Pricer* treePricer = new CRRBinomialTreePricer(10);
 
     // uncomment for output file creation
-    std::ofstream outputFile("");
+    std::ofstream outputFile(basePath + "output.txt");
 
     if (!outputFile) {
         std::cerr << "Unable to open file";
