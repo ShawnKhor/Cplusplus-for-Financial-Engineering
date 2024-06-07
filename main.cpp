@@ -11,6 +11,15 @@
 #include <utility>
 #include <vector>
 
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Market.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Pricer.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/EuropeanTrade.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Bond.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Swap.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Date.h"
+#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/AmericanTrade.h"
+
+
 using namespace std;
 
 void readFromFile(const string& fileName, string& title, vector< pair<string, double> >& values) {
@@ -105,7 +114,7 @@ int main() {
 
     // Read and add bond prices
     string bondname;
-    std::string bondPricePath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\bondPrice.txt";
+    std::string bondPricePath = "";
     vector< pair<string, double> >bondData;
     
     readFromFile(bondPricePath,bondname, bondData);
@@ -117,7 +126,7 @@ int main() {
 
     // Read and add stock prices
     string stockname;
-    std::string stockPricePath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\stockPrice.txt";
+    std::string stockPricePath = "";
     vector< pair<string, double> >stockData;
     
     readFromFile(stockPricePath,stockname, stockData);
@@ -128,7 +137,7 @@ int main() {
 
     // Read and add volatility data
     string volname;
-    std::string volPath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\vol.txt";
+    std::string volPath = "";
     vector< pair<string, double> >volData;
     
     readFromFile(volPath,volname, volData);
@@ -144,7 +153,7 @@ int main() {
 
     // Read and add curve data
     string curvename;
-    std::string curvePath = "C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\curve.txt";
+    std::string curvePath = "";
     vector< pair<string, double> >curveData;
     
     readFromFile(curvePath,curvename, curveData);
@@ -191,13 +200,13 @@ int main() {
 
 
     //American OPTIONS
-    TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* A_option1 = new AmericanOption(Call, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(A_option1);
 
-    TreeProduct* A_option2 = new AmericanOption(Put, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* A_option2 = new AmericanOption(Put, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(A_option2);
 
-    TreeProduct* A_option3 = new AmericanOption(BinaryCall, 100, Date(0, 2, 0), "AAPL");
+    TreeProduct* A_option3 = new AmericanOption(BinaryCall, 100, Date(0, 2, 0), "APPL");
     myPortfolio.push_back(A_option3);
 
     TreeProduct* A_option4 = new AmericanOption(BinaryPut, 100, Date(0, 2, 0), "APPL");
@@ -224,7 +233,7 @@ int main() {
     Pricer* treePricer = new CRRBinomialTreePricer(10);
 
     // uncomment for output file creation
-    std::ofstream outputFile("C:\\SMU\\Term 3\\QF633 - C++ for Financial Engineering\\Project_clone\\output.txt");
+    std::ofstream outputFile("");
 
     if (!outputFile) {
         std::cerr << "Unable to open file";
