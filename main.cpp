@@ -11,13 +11,13 @@
 #include <utility>
 #include <vector>
 
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Market.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Pricer.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/EuropeanTrade.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Bond.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Swap.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/Date.h"
-#include "../Project/Cplusplus-for-Financial-Engineering/Cplusplus-for-Financial-Engineering/AmericanTrade.h"
+#include "Market.h"
+#include "Pricer.h"
+#include "EuropeanTrade.h"
+#include "Bond.h"
+#include "Swap.h"
+#include "Date.h"
+#include "AmericanTrade.h"
 
 
 using namespace std;
